@@ -1,12 +1,5 @@
 #!/bin/bash
 
-setup() {
-	local path=$(getPath);
-	cd $path
-	chmod +x ./notifier.sh
-	(crontab -u $(whoami) -l 2>/dev/null 2>/dev/null | grep -v "$path"; echo "@reboot ${path}/notifier.sh") | crontab -u $(whoami) -
-}
-
 getPath() {
 	local relative_path="`dirname \"$0\"`"
 	local absolute_path="`(cd \"$relative_path\" && pwd)`"
@@ -16,4 +9,34 @@ getPath() {
 	fi
 	echo $absolute_path
 }
-setup
+
+
+# check if cron is running
+sudo systemctl status cron &> /dev/null || { echo "cron process not running" 1>&2; exit 1; } 
+
+setUp() {
+	local path=$(getPath);
+	local user=$(whoami);
+	local expression="XDG_RUNTIME_DIR=/run/user/$(id -u) ${path}/notifier.sh";
+	
+	chmod +x $path/notifier.sh;
+	# remove existing cronjob
+	crontab -l -u $user 2>/dev/null | grep -v "$expression" | crontab -u $user -;
+	# add new cronjob
+	(crontab -l -u $user 2>/dev/null; echo "* * * * * $expression") | crontab -u $user -;
+}
+
+
+cleanUp() {
+	local path=$(getPath);
+	crontab -l 2>/dev/null | grep -v "${path}/notifier.sh" | crontab -;
+}
+
+
+if [ "$1" = "-d" -o "$1" = "--delete" ]; then
+	cleanUp
+else
+	setUp
+fi
+
+
