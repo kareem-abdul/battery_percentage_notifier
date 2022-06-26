@@ -1,5 +1,5 @@
 # battery_percentage_notifier
-bash script that notifies when battery percentage is above or below a certain value  
+bash script that notifies when battery percentage is below a certain value  
 
 # install
 ```
