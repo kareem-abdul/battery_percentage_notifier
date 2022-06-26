@@ -1,6 +1,8 @@
 #!/bin/bash
 
-MAX_PERCENTAGE=80
+if [ -z $MAX_PERCENTAGE ]; then
+	MAX_PERCENTAGE=80;
+fi
 SOUND='/usr/share/sounds/freedesktop/stereo/bell.oga'
 
 main() {
