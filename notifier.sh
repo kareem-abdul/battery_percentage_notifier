@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MAX_PERCENTAGE=75
+MAX_PERCENTAGE=80
 SOUND='/usr/share/sounds/freedesktop/stereo/bell.oga'
 
 main() {
@@ -9,7 +9,7 @@ main() {
 	local percentage=`grep percentage <<< $info | cut -d: -f2 | tr -d ' ' | cut -d% -f1`;
 
 	if [ "$state" = "charging" ]; then
-		[ $percentage -gt $MAX_PERCENTAGE ] && (notify-send -a "Battery Percentage" "Batter above $MAX_PERCENTAGE%" && paplay $SOUND);
+		[ $percentage -gt $MAX_PERCENTAGE ] && { notify-send -a "Battery Percentage" "Batter above $MAX_PERCENTAGE%";  paplay $SOUND;  }
 	fi
 }
 
